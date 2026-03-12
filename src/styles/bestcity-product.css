@@ -1,0 +1,134 @@
+.bestcity-product-page {
+  min-height: 100vh;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.bestcity-product-container {
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+.bestcity-product-hero {
+  background: linear-gradient(135deg, #0f172a, #1e3a8a);
+  color: #ffffff;
+  padding: 4rem 0 3.5rem;
+}
+
+.bestcity-product-kicker {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.bestcity-product-hero h1 {
+  margin: 0 0 1rem;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  line-height: 1.1;
+}
+
+.bestcity-product-hero p {
+  max-width: 760px;
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.bestcity-product-main {
+  padding: 3rem 0 4rem;
+}
+
+.bestcity-product-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.bestcity-product-image-card,
+.bestcity-feature-card {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+}
+
+.bestcity-product-image-card {
+  overflow: hidden;
+}
+
+.bestcity-product-image-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.bestcity-product-details h2 {
+  margin: 0 0 1rem;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+}
+
+.bestcity-product-details > p {
+  margin: 0 0 1.5rem;
+  color: #334155;
+  line-height: 1.8;
+}
+
+.bestcity-product-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.bestcity-feature-card {
+  padding: 1.25rem;
+}
+
+.bestcity-feature-card h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
+}
+
+.bestcity-feature-card p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.7;
+}
+
+.bestcity-product-footer {
+  background: #0f172a;
+  color: #ffffff;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.bestcity-product-footer p {
+  margin: 0;
+}
+
+@media (max-width: 960px) {
+  .bestcity-product-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bestcity-product-features {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .bestcity-product-hero {
+    padding: 3rem 0 2.75rem;
+  }
+
+  .bestcity-product-main {
+    padding: 2rem 0 3rem;
+  }
+
+  .bestcity-feature-card {
+    padding: 1rem;
+  }
+}

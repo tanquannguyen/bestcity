@@ -1,9 +1,14 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiMenu, FiX } from 'react-icons/fi';
+import { useWallet } from '../../hooks/useWallet';
+import WalletButton from '../wallet/WalletButton';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { isConnected, walletAddress, networkName } = useWallet();
+
+  const shortAddress = walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : '';
 
   const navigation = [
     { name: 'Home', href: '/' },
@@ -38,11 +43,15 @@ function Navbar() {
                 {item.name}
               </Link>
             ))}
-            <button
-              className="btn"
-            >
-              Connect
-            </button>
+            <div className="flex items-center gap-3">
+              {isConnected ? (
+                <div className="hidden lg:block text-right">
+                  <p className="text-xs font-semibold text-secondary-700">{shortAddress}</p>
+                  <p className="text-xs text-secondary-500">{networkName}</p>
+                </div>
+              ) : null}
+              <WalletButton className="btn" />
+            </div>
           </div>
 
           {/* Mobile menu button */}
@@ -71,12 +80,10 @@ function Navbar() {
                   {item.name}
                 </Link>
               ))}
-              <button
-                className="block px-3 py-2 text-base font-medium text-white bg-primary-600 hover:bg-primary-700"
+              <WalletButton
+                className="block w-full px-3 py-2 text-base font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg"
                 onClick={() => setIsOpen(false)}
-              >
-                Connect
-              </button>
+              />
             </div>
           </div>
         )}

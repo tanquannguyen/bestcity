@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiArrowRight, FiUser, FiClock } from 'react-icons/fi';
+import WalletButton from '../components/wallet/WalletButton';
+import WalletStatus from '../components/wallet/WalletStatus';
 import { FaWallet, FaStore, FaMoneyBillWave, FaExchangeAlt, FaChartLine, FaLock, FaUserCog, FaCoins } from 'react-icons/fa';
 import { SiEthereum } from 'react-icons/si';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
@@ -415,12 +417,10 @@ function Home() {
             >
               Browse Properties
             </Link>
-            <button
-              className="btn bg-primary-700 hover:bg-primary-800"
-            >
-              <FaWallet className="mr-2" />
-              Connect Wallet
-            </button>
+            <WalletButton className="btn bg-primary-700 hover:bg-primary-800" />
+          </div>
+          <div className="max-w-xl mx-auto">
+            <WalletStatus />
           </div>
         </div>
       </section>

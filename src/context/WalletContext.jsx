@@ -79,6 +79,7 @@ export function WalletProvider({ children }) {
 
   const disconnectWallet = useCallback(() => {
     setWalletAddress('');
+    setChainId('');
     setError('');
   }, []);
 
